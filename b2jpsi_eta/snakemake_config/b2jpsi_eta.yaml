@@ -1,0 +1,12 @@
+decays:
+  - jpsi2ee_eta2gammagamma
+  - jpsi2ee_eta2pipigamma
+  - jpsi2ee_eta2pipipi0
+  - jpsi2ee_eta23pi0
+  - jpsi2mumu_eta2gammagamma
+  - jpsi2mumu_eta2pipigamma
+  - jpsi2mumu_eta2pipipi0
+  - jpsi2mumu_eta23pi0
+
+total_events_per_mode: 100000
+events_per_job: 1000

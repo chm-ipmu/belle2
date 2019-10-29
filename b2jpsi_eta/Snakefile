@@ -1,46 +1,14 @@
-### Workflow for B -> J/psi eta  analysis
-# Author: Colm Murphy
-# Institute: IPMU
-# Email: colm.murphy@ipmu.jp
-# Repository: https://github.com/chm-ipmu/belle2
+#### Workflow for B -> J/psi eta  analysis
+## Author: Colm Murphy
+## Institute: IPMU
+## Email: colm.murphy@ipmu.jp
+## Repository: https://github.com/chm-ipmu/belle2
 
+configfile: "snakemake_config/b2jpsi_eta.yaml"
 
-# Decays
-JPSI_DECAYS = "jpsi2ee jpsi2mumu".split()
-ETA_DECAYS = "eta2gammagamma eta2pipigamma eta2pipipi0 eta23pi0".split()
+# EvtGen --> GSIM --> hadd
+# Makes DECAYS variable available.
+include: "../snakefiles/produce_mc.snake"
 
-# Use wildcard to make list of all possible decay modes
-DECAYS = expand("{jpsi_decay}_{eta_decay}", jpsi_decay=JPSI_DECAYS, eta_decay=ETA_DECAYS)
-
-EVENTS_PER_MODE = 1e6
-EVENTS_PER_JOB = 1e5
-N_JOBS = list(range(int(EVENTS_PER_MODE / EVENTS_PER_JOB)))
-
-# Dummy rule enforces production of .root files
 rule all:
-    input: expand("simulation/root_files/{decay}_{i}.root", decay=DECAYS, i=N_JOBS)
-
-# Create MC .root files (not yet passed through Belle II)
-rule generate_mc:
-    params:
-          n_events=int(10e3),
-
-    input:
-         "evt_gen/dec_files/{decay}.DEC"
-
-    output:
-          "evt_gen/root_files/{decay}_{i}.root"
-
-    shell:
-         "basf2 evt_gen/generate.py {params.n_events} {input} {output} {wildcards.i}"
-
-# Pass generated MC .root files through Belle II detector simulation
-rule simulate_b2:
-    input:
-         "evt_gen/root_files/{decay}_{i}.root"
-
-    output:
-          "simulation/root_files/{decay}_{i}.root"
-
-    shell:
-         "basf2 simulation/belle2.py {input} {output}"
+    input: expand("simulation/root_files/merged/{decay}.root", decay=DECAYS)
