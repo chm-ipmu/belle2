@@ -1,0 +1,84 @@
+### General Snakefile which runs generation/simulation/merging of MC
+# Author: Colm Murphy
+# Institute: IPMU
+# Email: colm.murphy@ipmu.jp
+# Repository: https://github.com/chm-ipmu/belle2
+#
+# Instructions:
+# - configfile  (json or yaml)
+#   Must contain:
+#       "decays": list of decays to be considered, must match names
+#       of .DEC files in evt_gen/dec_files folder.
+#       "total_events_per_mode": Number of events you want simulated
+#       e.g. 1000000.
+#       "events_per_job": How many events should be generated for a 
+#       given job. Change this number depending on how many batch nodes
+#       you expect to be available.
+#
+# - .DEC files
+#   DEC files specifying the decay wanted from EvtGen should be placed
+#   in a directory called "dec_files" at the same level as your Snakefile.
+#   names of files should match those listed under "decays" in your 
+#   configfile.
+#
+# To run on its own, just exectute "snakemake" on the command-line, in the same
+# directory as this file, with the "all" rule uncommented and the configfile set. 
+#
+# To include as part of a more complex workflow then import this snakefile using
+# "include: /path/to/this/file" and make sure the configfile is set in the 
+# importing file.
+#
+# To use batch nodes, use "snakemake -j <max_jobs> --cluster <batch_name>"
+# e.g. "snakemake -j 999 --cluster bsub".
+#
+# To ensure the whole workflow is exectuted run the snakemake command in a
+# screen/tmux session.
+#
+# Note:
+#  - directories needed will be created automatically
+#  - only the final merged files will be saved, to save space. To stop this
+#    replace the temp(<filename>) commands with <filename>.
+
+# Load configfile (list of decay modes considered, etc)
+# !!! UNCOMMENT if running this file on its own.
+#
+# configfile: "snakemake_config/b2jpsi_eta.yaml"
+
+DECAYS = config["decays"]
+
+# Parameters for defining how many events each job should generate/pass through simulation
+EVENTS_PER_MODE = config["total_events_per_mode"]
+EVENTS_PER_JOB = config["events_per_job"]
+N_JOBS = list(range(int(EVENTS_PER_MODE / EVENTS_PER_JOB)))
+
+
+# Dummy rule enforces production of final .root files.
+# If importing this file, put this (uncommented) in importing Snakefile, or use merged
+# file as input to another rule.
+# !!! UNCOMMENT if running this file on its own.
+#
+# rule all:
+#     input: expand("simulation/root_files/merged/{decay}.root", decay=DECAYS)
+
+
+# Create MC .root files (not yet passed through Belle II)
+rule generate_mc_block:
+    input: "dec_files/{decay}.DEC"
+    output: temp("evt_gen/root_files/{decay}_{i}.root")
+    shell: "basf2 evt_gen/generate.py {EVENTS_PER_JOB} {input} {output} {wildcards.i}"
+
+
+# Pass generated MC .root files through Belle II detector simulation
+rule simulate_b2:
+    params:
+        processes = 10
+    input: "evt_gen/root_files/{decay}_{i}.root"
+    output: temp("simulation/root_files/{decay}_{i}.root")
+    shell: "basf2 -p{params.processes} simulation/belle2.py {input} {output}"
+
+# Merge simulated .root files together for easier analysis
+rule merge_simulated:
+    input: expand("simulation/root_files/{{decay}}_{i}.root", i=N_JOBS)
+    output: protected("simulation/root_files/merged/{decay}.root")
+    shell: "hadd {output} {input}"
+
