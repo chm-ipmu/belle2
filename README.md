@@ -1,5 +1,6 @@
 # Belle II Repository
-Colm Murphy, IPMU
+##### Colm Murphy - PhD Candidate, University of Oxford.
+##### Institute for the Physics and Mathematics of the Universe (IPMU)
 
 ## B -> J/psi eta
 Look at all combinations of

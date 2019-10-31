@@ -1,0 +1,25 @@
+jpsi2ee_eta23pi0:
+  sub_decays:
+    - J/psi -> e+ e-
+    - pi0 -> gamma gamma
+    - eta -> pi0 pi0 pi0
+    - B0 -> J/psi eta
+
+jpsi2ee_eta2gammagamma:
+  sub_decays:
+    - J/psi -> e+ e-
+    - eta -> gamma gamma
+    - B0 -> J/psi eta
+
+jpsi2ee_eta2pipigamma:
+  sub_decays:
+    - J/psi -> e+ e-
+    - eta -> pi+ pi- gamma
+    - B0 -> J/psi eta
+
+jpsi2ee_eta2pipipi0:
+  sub_decays:
+    - J/psi -> e+ e-
+    - pi0 -> gamma gamma
+    - eta -> pi+ pi- pi0
+    - B0 -> J/psi eta

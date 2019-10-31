@@ -9,6 +9,7 @@ import simulation as si
 
 def simulation(input_file, output_file):
     my_path = b2.create_path()
+    print(f"Number of processes: {b2.get_nprocesses()}")
 
     # load input ROOT file
     ma.inputMdst(
