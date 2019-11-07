@@ -12,11 +12,11 @@ def reconstruction(input_file, output_file):
     ma.inputMdst('default', input_file, my_path)
 
     # Find decay name from the input file name
-    decay = "_".join(input_file.split('/')[-1].split('_')[0:2])
+    decay_name = "_".join(input_file.split('/')[-1].split('_')[0:2])
 
     # Load configuration file
     config = yaml.safe_load(open("config/reco_config.yaml"))
-    options = config[decay]
+    options = config[decay_name]
 
     # Parse list of subdecays in decay chain
     decays = options["sub_decays"]
@@ -24,25 +24,19 @@ def reconstruction(input_file, output_file):
 
     # Create particle lists for final state particles
     fsps = decays.get_fsps()
-
     for particle in fsps:
-        print(particle)
         ma.fillParticleList(particle, '', path=my_path)
 
     # Reconstruct requested decay chains
-    decay_strings = options["sub_decays"]
-    for decay_string in decay_strings:
-        print(decay_string)
-        ma.reconstructDecay(decay_string, '', path=my_path)
+    for decay in decays:
+        ma.reconstructDecay(str(decay), '', path=my_path)
 
     # Perform truth matching for requested particles
-    truth_match_particles = DecayList.mothers
+    truth_match_particles = decays.mothers
     for truth_match_particle in truth_match_particles:
-        print(truth_match_particle)
         ma.looseMCTruth(truth_match_particle, path=my_path)
 
     # Perform vertex fitting
-    reco_options = options["vertex_reconstructions"]
     head = decays.get_head()
     vtx_decay_string = decays.get_chain()
     print(vtx_decay_string)
@@ -81,16 +75,12 @@ def reconstruction(input_file, output_file):
         vc.mc_tag_vertex,
     ] for item in sublist]
 
-    trees = options["trees"]
-    for particle, tree_name in trees.items():
-        ma.variablesToNtuple(particle, variables, filename=output_file, treename=tree_name, path=my_path)
+    trees = yaml.safe_load(open("config/tree_names.yaml"))
+    for particle in decays.all_particles:
+        ma.variablesToNtuple(particle, variables, filename=output_file, treename=trees[particle], path=my_path)
 
     b2.process(my_path)
     print(b2.statistics)
-
-
-# reconstruction("../simulation/root_files/jpsi2ee_eta23pi0_0.root", "jpsi2ee_eta23pi0.root")
-# reconstruction("../simulation/root_files/jpsi2ee_eta2gammagamma_0.root", "jpsi2ee_eta2gammagamma.root")
 
 if __name__ == '__main__':
     import sys

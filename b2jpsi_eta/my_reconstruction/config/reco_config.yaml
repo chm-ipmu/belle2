@@ -1,17 +1,38 @@
 jpsi2ee_eta23pi0:
+  particle_lists:
+    e+:
+      - uncorrected: electronID > 0.5 and abs(d0) < 1 and abs(z0) < 4
+    gamma:
+      - all: E < 1.0
+
   sub_decays:
     - J/psi -> e+ e-
     - pi0 -> gamma gamma
     - eta -> pi0 pi0 pi0
     - B0 -> J/psi eta
 
+#  additional_steps:
+#    correctFSR:
+
 jpsi2ee_eta2gammagamma:
+  particle_lists:
+    e+:
+      - uncorrected: electronID > 0.5 and abs(d0) < 1 and abs(z0) < 4
+    gamma:
+      - all: E < 1.0
+
   sub_decays:
     - J/psi -> e+ e-
     - eta -> gamma gamma
     - B0 -> J/psi eta
 
 jpsi2ee_eta2pipigamma:
+  particle_lists:
+    e+:
+      - uncorrected: electronID > 0.5 and abs(d0) < 1 and abs(z0) < 4
+    gamma:
+      - all: E < 1.0
+
   sub_decays:
     - J/psi -> e+ e-
     - eta -> pi+ pi- gamma

@@ -70,15 +70,15 @@ rule generate_mc_block:
 
 # Pass generated MC .root files through Belle II detector simulation
 rule simulate_b2:
-    params:
-        processes = 10
+    resources:
+             processes=16
     input: "evt_gen/root_files/{decay}_{i}.root"
-    output: temp("simulation/root_files/{decay}_{i}.root")
-    shell: "basf2 -p{params.processes} simulation/belle2.py {input} {output}"
+    output: "simulation/root_files/{decay}_{i}.root"
+    shell: "basf2 -p{resources.processes} simulation/belle2.py {input} {output}"
+
 
 # Merge simulated .root files together for easier analysis
-rule merge_simulated:
-    input: expand("simulation/root_files/{{decay}}_{i}.root", i=N_JOBS)
-    output: protected("simulation/root_files/merged/{decay}.root")
-    shell: "hadd {output} {input}"
-
+# rule merge_simulated:
+#     input: expand("simulation/root_files/{{decay}}_{i}.root", i=N_JOBS)
+#     output: protected("simulation/root_files/merged/{decay}.root")
+#     shell: "hadd {output} {input}"

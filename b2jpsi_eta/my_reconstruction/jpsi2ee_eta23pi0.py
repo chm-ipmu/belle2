@@ -9,13 +9,13 @@ import variables.collections as vc
 import variables.utils as vu
 import vertex as vx
 
-
 def reconstruction(input_file, output_file):
+
     my_path = b2.create_path()
     ma.inputMdst('default', input_file, my_path)
 
-    ma.fillParticleList('e+', '', path=my_path)
-    ma.fillParticleList('gamma', '', path=my_path)
+    ma.fillParticleList('e+', 'electronID > 0.5 and abs(d0) < 1 and abs(z0) < 4', path=my_path)
+    ma.fillParticleList('gamma', 'E < 1.0', path=my_path)
 
     ma.reconstructDecay('J/psi -> e+ e-', '', path=my_path)
     ma.reconstructDecay('pi0 -> gamma gamma', '', path=my_path)
@@ -66,11 +66,9 @@ def reconstruction(input_file, output_file):
     print(b2.statistics)
 
 
-reconstruction("../simulation/root_files/jpsi2ee_eta23pi0_0.root", "test.root")
-
 if __name__ == '__main__':
     import sys
 
     args = sys.argv[1:]
-    print(f"Reconstruction called with parameters: {args}")
+    print(f'Reconstruction called with parameters: {args}')
     reconstruction(*args)

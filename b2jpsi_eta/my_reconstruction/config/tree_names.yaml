@@ -1,6 +1,7 @@
 # Tree names from particle names
 B0: b0
 e+: electron
+e-: electron_m
 eta: eta
 gamma: gamma
 J/psi: jpsi

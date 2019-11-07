@@ -8,5 +8,7 @@ decays:
   - jpsi2mumu_eta2pipipi0
   - jpsi2mumu_eta23pi0
 
-total_events_per_mode: 100000
-events_per_job: 1000
+#total_events_per_mode: 100000
+#events_per_job: 1000
+total_events_per_mode: 1000
+events_per_job: 100

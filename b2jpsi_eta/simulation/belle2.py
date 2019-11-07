@@ -33,7 +33,7 @@ def simulation(input_file, output_file):
         - 'default': for analysis of Belle II MC samples produced with releases with release-02-00-00 or newer.
           This environment sets the default magnetic field (see geometry settings)
         - 'Belle': for analysis of converted (or during of conversion of) Belle MC/DATA samples
-        - 'None': for analysis of generator level information or during simulation/reconstruction of
+        - 'None': for analysis of generator level information or during simulation/my_reconstruction of
           previously generated events
 
         Note that there is no difference between MC6 and MC7. Both are given for sake of completion.
@@ -55,7 +55,7 @@ def simulation(input_file, output_file):
     # simulation
     si.add_simulation(path=my_path)
 
-    # reconstruction
+    # my_reconstruction
     re.add_reconstruction(path=my_path)
 
     # dump in MDST format

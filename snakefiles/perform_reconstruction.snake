@@ -1,0 +1,10 @@
+### Snakefile which runs my_reconstruction script after MC created
+rule perform_reconstruction:
+    input: "simulation/root_files/{decay}_{i}.root"
+    output: "my_reconstruction/root_files/{decay}_{i}.root"
+    shell: "basf2 my_reconstruction/template.py {input} {output}"
+
+rule merge_reconstructed:
+    input: expand("my_reconstruction/root_files/{{decay}}_{i}.root", i=N_JOBS)
+    output: protected("merged/root_files/{decay}.root")
+    shell: "hadd {output} {input}"

@@ -2,7 +2,7 @@ class Track:
     def __init__(self, track):
         self.track = track.strip()
         self.is_charged = "+" in self.track or "-" in self.track
-        self.q_agnostic = self.track.replace("+", "").replace("-", "")
+        self.q_agnostic = self.track.replace("-", "+")
         self.for_fitting = f"^{self.track}" if self.is_charged else self.track
 
     def __repr__(self):
@@ -18,7 +18,7 @@ class ParseDecay:
 
     def __str__(self):
         fit_daughters = ' '.join([Track(x).for_fitting for x in self.daughters])
-        string = f"[{self.mother!s} -> {fit_daughters!s}] "
+        string = f"{self.mother!s} -> {fit_daughters!s} "
         return string
 
     def __repr__(self):
@@ -46,6 +46,10 @@ class DecayList(list):
         from itertools import chain
         return list(chain(*[item.daughters for item in self]))
 
+    @property
+    def all_particles(self):
+        return list(set(self.mothers + self.daughters))
+
     # Get list of final state particles
     def get_fsps(self, unique_only=True):
         ret = []
@@ -54,13 +58,7 @@ class DecayList(list):
             if is_fsp:
                 ret.append(d)
 
-        # Clean-up charge conjugates
-        def rm_charge(x):
-            if "-" in x:
-                x = x.replace("-", "+")
-            return x
-
-        ret = [rm_charge(x) for x in ret]
+        ret = [Track(x).q_agnostic for x in ret]
 
         if unique_only:
             ret = set(ret)
@@ -80,17 +78,20 @@ class DecayList(list):
         decay_dict = dict(self.decay_dict())
         head = self.get_head()
         chain = str(decay_dict.pop(head))
-        print(decay_dict)
 
         def check(string, particle):
             return particle in string and f"[{particle} ->" not in string
 
-        while any(check(chain, x) for x in self.mothers):
+        # Stop infinite recursion
+        mothers = [x for x in self.mothers if x != head]
+
+        while any(check(chain, x) for x in mothers):
             for m, sub_decay in decay_dict.items():
-                while m in chain and f"{m} ->" not in chain:
-                    chain = chain.replace(m, str(sub_decay))
+                while m in chain and f"[{m} ->" not in chain:
+                    chain = chain.replace(m, f"[{sub_decay}]")
 
         # Trim initial '[' and final '] ', which are not needed
         chain = chain[1:-2]
+        print(chain)
 
         return chain

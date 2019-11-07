@@ -73,7 +73,7 @@ def reconstruction(input_file, output_file):
     ma.fillParticleList(decayString='pi+:good', cut='chiProb > 0.001 and pionID > 0.1', path=mypath)
     ma.fillParticleList(decayString='K+:good', cut='chiProb > 0.001 and kaonID > 0.1', path=mypath)
 
-    ##psi(2S) reconstruction
+    ##psi(2S) my_reconstruction
     ma.reconstructDecay(decayString='psi(2S):ee -> J/psi:ee pi+:good pi-:good', cut="3.5 < M < 3.8 ", path=mypath)
 
     ma.reconstructDecay(decayString='psi(2S):den -> e+:corrected e-:corrected',

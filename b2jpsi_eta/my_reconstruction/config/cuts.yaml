@@ -1,0 +1,14 @@
+e+:
+  uncorrected: electronID > 0.5 and abs(d0) < 1 and abs(z0) < 4
+
+mu+:
+  good: muonID > 0.5 and abs(d0) < 1 and abs(z0) < 3
+
+gamma:
+  all: E < 1.0
+
+pi+:
+  good: chiProd > 0.001 and pionID > 0.1
+
+K+:
+  good: chiProd > 0.001 and kaonID > 0.1
