@@ -130,11 +130,12 @@ class Reconstruction:
         for particle in particles:
             ma.looseMCTruth(particle, path=self.path)
 
-    def rave_vertex_reconstruction(self) -> None:
+    @property
+    def decay_string(self):
         """
-        Perform vertex reconstruction using Rave and the 'iptube' constraint. Could change the constraint to be an
-        argument or specified in a config file.
-        :return: None
+        Correctly formatted decay string derived from the decay given to constructor. ^ indicates that a
+        given particle will be used for vertex reconstruction.
+        :return:
         """
         # J/psi decay is straightforward
         lepton = "e" if self.has_jpsi2ee else "mu"
@@ -153,8 +154,16 @@ class Reconstruction:
             eta_decay_string = "eta -> ^pi+ ^pi- [pi0 -> gamma gamma]"
 
         decay_string = f"B0 -> [{jpsi_decay_string}] [{eta_decay_string}]"
+        return decay_string
 
-        vx.vertexRave("B0", 0, decay_string, constraint="iptube", path=self.path)
+    def rave_vertex_reconstruction(self, list_name: str = "B0", conf_level: int = 0,
+                                   constraint: str = "iptube") -> None:
+        """
+        Perform vertex reconstruction using Rave and the 'iptube' constraint. Could change the constraint to be an
+        argument or specified in a config file.
+        :return: None
+        """
+        vx.vertexRave(list_name, conf_level, self.decay_string, constraint=constraint, path=self.path)
 
     def reconstruction(self, input_file: str, output_file: str) -> None:
         """
@@ -275,6 +284,12 @@ class Reconstruction:
 
         b2.process(self.path)
         print(b2.statistics)
+
+
+my_path = b2.create_path()
+input_file = "../simulation/root_files/jpsi2ee_eta2gammagamma_0.root"
+reco = Reconstruction(input_file, my_path)
+reco.reconstruction(input_file, "test.root")
 
 
 if __name__ == "__main__":
