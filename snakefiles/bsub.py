@@ -57,14 +57,14 @@ def main():
     job_properties = read_job_properties(args.jobscript)
 
     # By default, we use 1 thread.
-    threads = job_properties.get('threads', 1)
+    threads = job_properties.get("threads", 1)
 
     # We'll leave unspecified the memory and runtime with 0 MB and 0 minutes.
-    mem = int(job_properties['resources'].get('mem', '0'))
-    runtime = int(job_properties['resources'].get('runtime', '0'))
+    mem = int(job_properties["resources"].get("mem", "0"))
+    runtime = int(job_properties["resources"].get("runtime", "0"))
 
     # Let the user specify the queue.
-    queue = job_properties['resources'].get('queue', None)
+    queue = job_properties["resources"].get("queue", None)
 
     # Otherwise, choose an appropriate queue based on required resources.
     if not queue:
@@ -72,7 +72,7 @@ def main():
 
     # If we fail to find a queue, exit with an error.
     if not queue:
-        msg = 'No valid queue! job_properties:\n'
+        msg = "No valid queue! job_properties:\n"
         js = json.dumps(job_properties, indent=4, sort_keys=True)
         sys.stderr.write(msg + js)
         sys.exit(1)
@@ -82,55 +82,54 @@ def main():
 
 
 def run_bsub(queue, threads, mem, runtime, script, stdout, stderr):
-    cmd = 'bsub -q {q} -n {t}'.format(q=queue, t=threads)
+    cmd = "bsub -q {q} -n {t}".format(q=queue, t=threads)
     if mem:
         cmd += ' -R "rusage[mem={}]"'.format(mem)
     if runtime:
-        cmd += ' -W {}'.format(runtime)
+        cmd += " -W {}".format(runtime)
     if stdout:
-        cmd += ' -o {}'.format(stdout)
+        cmd += " -o {}".format(stdout)
     if stderr:
-        cmd += ' -e {}'.format(stderr)
-    cmd += ' {s}'.format(s=script)
+        cmd += " -e {}".format(stderr)
+    cmd += " {s}".format(s=script)
     return os.system(cmd)
 
 
 def get_queue(threads, mem, runtime):
     # Selected KEKCC queues
-    queues = ['s', 'l', 'h',
-              'sx', 'lx', 'hx']
+    queues = ["s", "l", "h", "sx", "lx", "hx"]
 
     # Find valid queues for this job's requirements.
     retval = []
 
     # Only consider 'vshort' if we specify a nonzero runtime.
     if threads == 1 and mem <= 1000 and 0 < runtime <= 15:
-        retval.append('vshort')
+        retval.append("vshort")
     # The other queues are all ok if we leave runtime=0.
     if threads == 1 and mem <= 4000 and runtime <= 60:
-        retval.append('short')
+        retval.append("short")
     if threads <= 4 and mem <= 8000 and runtime <= 60 * 24:
-        retval.append('medium')
+        retval.append("medium")
     if threads <= 6 and mem <= 8000 and runtime <= 60 * 24 * 3:
-        retval.append('normal')
+        retval.append("normal")
     if threads <= 4 and mem <= 8000 and runtime <= 60 * 24 * 7:
-        retval.append('long')
+        retval.append("long")
     if threads <= 4 and mem <= 4000 and runtime <= 60 * 24 * 7 * 4:
-        retval.append('vlong')
+        retval.append("vlong")
     if threads <= 6 and mem > 8000:
-        retval.append('big')
+        retval.append("big")
     if 8 <= threads <= 16 and mem > 8000:
-        retval.append('big-multi')
+        retval.append("big-multi")
     # Make sure we have at least one valid queue.
     if not len(retval):
         return None
     # Get the number of currently running jobs on each queue.
-    lines = check_output('bqueues').split(b'\n')[1:-1]
-    lines = [line.decode('utf-8').split() for line in lines]
+    lines = check_output("bqueues").split(b"\n")[1:-1]
+    lines = [line.decode("utf-8").split() for line in lines]
     njobs = {x[0]: int(x[7]) for x in lines}
     # Among valid queues, choose the one with fewest running jobs.
     return min(retval, key=lambda j: njobs[j])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -2,7 +2,6 @@ from collections import defaultdict
 
 
 class Cut:
-
     def __init__(self, name, cut_string, category):
         self.name = name
         self.cut_string = cut_string
@@ -13,7 +12,6 @@ class Cut:
 
 
 class Particle:
-
     def __init__(self, particle):
         self.particle = particle
         charge = particle[-1]
@@ -29,7 +27,10 @@ class Particle:
 
 def test_cuts():
     my_electron = Particle("e+")
-    good_electrons = Cut(name="good", cut_string="electronID > 0.5 and abs(d0) < 1 and abs(z0) < 4",
-                         category="default")
+    good_electrons = Cut(
+        name="good",
+        cut_string="electronID > 0.5 and abs(d0) < 1 and abs(z0) < 4",
+        category="default",
+    )
     my_electron.add_cut(good_electrons)
     print("done")

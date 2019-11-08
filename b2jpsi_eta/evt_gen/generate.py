@@ -15,18 +15,14 @@ def submit_generation(n_events, dec_file, out_name, random_seed):
     ge.set_random_seed(random_seed)
     my_path = b2.create_path()
     ma.setupEventInfo(noEvents=n_events, path=my_path)
-    ge.add_evtgen_generator(
-        path=my_path,
-        finalstate='signal',
-        signaldecfile=dec_file
-    )
+    ge.add_evtgen_generator(path=my_path, finalstate="signal", signaldecfile=dec_file)
     ma.loadGearbox(path=my_path)
-    my_path.add_module('RootOutput', outputFileName=out_name)
+    my_path.add_module("RootOutput", outputFileName=out_name)
     b2.process(path=my_path)
     print(b2.statistics)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     args = sys.argv[1:]
     print(f"Generating events with arguments: {args}")
     submit_generation(*args)

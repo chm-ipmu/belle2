@@ -17,22 +17,21 @@ class ParseDecay:
         self.daughters = [x.strip() for x in daughters.split()]
 
     def __str__(self):
-        fit_daughters = ' '.join([Track(x).for_fitting for x in self.daughters])
+        fit_daughters = " ".join([Track(x).for_fitting for x in self.daughters])
         string = f"{self.mother!s} -> {fit_daughters!s} "
         return string
 
     def __repr__(self):
-        string = f"ParseDecay({self.string!r}) [m={self.mother!r}, d={self.daughters!r}]"
+        string = (
+            f"ParseDecay({self.string!r}) [m={self.mother!r}, d={self.daughters!r}]"
+        )
         return string
 
 
 class DecayList(list):
-
     def __init__(self, a_list=None):
         if a_list is not None:
-            super(DecayList, self).__init__(
-                ParseDecay(x) for x in a_list
-            )
+            super(DecayList, self).__init__(ParseDecay(x) for x in a_list)
         else:
             super(DecayList, self).__init__()
 
@@ -44,6 +43,7 @@ class DecayList(list):
     def daughters(self):
         # Flatten singly nested list
         from itertools import chain
+
         return list(chain(*[item.daughters for item in self]))
 
     @property

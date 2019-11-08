@@ -12,11 +12,7 @@ def simulation(input_file, output_file):
     print(f"Number of processes: {b2.get_nprocesses()}")
 
     # load input ROOT file
-    ma.inputMdst(
-        environmentType='default',
-        filename=input_file,
-        path=my_path
-    )
+    ma.inputMdst(environmentType="default", filename=input_file, path=my_path)
     """
         Loads the specified ROOT (DST/mDST/muDST) files with the RootInput module.
 
@@ -59,14 +55,10 @@ def simulation(input_file, output_file):
     re.add_reconstruction(path=my_path)
 
     # dump in MDST format
-    mdst.add_mdst_output(
-        path=my_path,
-        mc=True,
-        filename=output_file
-    )
+    mdst.add_mdst_output(path=my_path, mc=True, filename=output_file)
 
     # Show progress of processing
-    progress = b2.register_module('ProgressBar')
+    progress = b2.register_module("ProgressBar")
     my_path.add_module(progress)
 
     # Process the events
@@ -74,7 +66,7 @@ def simulation(input_file, output_file):
     print(b2.statistics)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     args = sys.argv[1:]
     print(f"Simulating Belle II and saving resultant MDST, with arguments: {args}")
     simulation(*args)
