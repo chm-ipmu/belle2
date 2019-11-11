@@ -5,7 +5,7 @@ General repository for personal work on the Belle II experiment.
 
 ------
 #### Colm Murphy
-#####DPhil Candidate, University of Oxford
+###### DPhil Candidate, University of Oxford
 
 The first two years of my PhD ("DPhil" in Oxford terms) were spend working on LHCb
 at the University of Oxford. 
