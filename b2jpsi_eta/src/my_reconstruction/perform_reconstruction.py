@@ -15,10 +15,20 @@ class Reconstruction:
 
     def __attrs_post_init__(self) -> None:
         """
-        Look at decay object and instantiate a series of booleans to describe
-        which sub-decays are involved in this decay mode.
+        Look at decay string given to constructor and instantiate a series of booleans to describe
+        which total decay and sub-decays are involved in this decay mode.
         :return:  None
         """
+        # Total decay
+        self.is_jpsi2ee_eta2gammagamma = "jpsi2ee_eta2gammagamma" in self.decay
+        self.is_jpsi2mumu_eta2gammagamma = "jpsi2mumu_eta2gammagamma" in self.decay
+        self.is_jpsi2ee_eta2pipigamma = "jpsi2ee_eta2pipigamma" in self.decay
+        self.is_jpsi2mumu_eta2pipigamma = "jpsi2mumu_eta2pipigamma" in self.decay
+        self.is_jpsi2ee_eta2pipipi0 = "jpsi2ee_eta2pipipi0" in self.decay
+        self.is_jpsi2mumu_eta2pipipi0 = "jpsi2mumu_eta2pipipi0" in self.decay
+        self.is_jpsi2ee_eta23pi0 = "jpsi2ee_eta23pi0" in self.decay
+        self.is_jpsi2mumu_eta23pi0 = "jpsi2mumu_eta23pi0" in self.decay
+
         # J/psi decays
         self.has_jpsi2ee = "jpsi2ee" in self.decay
         self.has_jpsi2mumu = "jpsi2mumu" in self.decay
@@ -137,23 +147,23 @@ class Reconstruction:
         given particle will be used for vertex reconstruction.
         :return:
         """
-        # J/psi decay is straightforward
-        lepton = "e" if self.has_jpsi2ee else "mu"
-        jpsi_decay_string = f"J/psi -> ^{lepton}+ ^{lepton}+"
+        if self.is_jpsi2ee_eta2gammagamma:
+            decay_string = "B0 -> [J/psi -> ^e+ ^e-] [eta -> gamma gamma]"
+        elif self.is_jpsi2mumu_eta2gammagamma:
+            decay_string = "B0 -> [J/psi -> ^mu+ ^mu-] [eta -> gamma gamma]"
+        elif self.is_jpsi2ee_eta2pipigamma:
+            decay_string = "B0 -> [J/psi -> ^e+ ^e-] [eta -> ^pi+ ^pi- gamma]"
+        elif self.is_jpsi2mumu_eta2pipigamma:
+            decay_string = "B0 -> [J/psi -> ^mu+ ^mu-] [eta -> ^pi+ ^pi- gamma]"
+        elif self.is_jpsi2ee_eta2pipipi0:
+            decay_string = "B0 -> [J/psi -> ^e+ ^e-] [eta -> ^pi+ ^pi- [pi0 -> gamma gamma]]"
+        elif self.is_jpsi2mumu_eta2pipipi0:
+            decay_string = "B0 -> [J/psi -> ^mu+ ^mu-] [eta -> ^pi+ ^pi- [pi0 -> gamma gamma]]"
+        elif self.is_jpsi2ee_eta23pi0:
+            decay_string = "B0 -> [J/psi -> ^e+ ^e-] [eta -> [pi0 -> gamma gamma] [pi0 -> gamma gamma] [pi0 -> gamma gamma]]"
+        elif self.is_jpsi2mumu_eta23pi0:
+            decay_string = "B0 -> [J/psi -> ^mu+ ^mu-] [eta -> [pi0 -> gamma gamma] [pi0 -> gamma gamma] [pi0 -> gamma gamma]]"
 
-        # eta meson decay
-        if self.has_eta2gammagamma:
-            eta_decay_string = "eta -> gamma gamma"
-        elif self.has_eta23pi0:
-            eta_decay_string = (
-                "eta -> [pi0 -> gamma gamma] [pi0 -> gamma gamma] [pi0 -> gamma gamma]"
-            )
-        elif self.has_eta2pipigamma:
-            eta_decay_string = "eta -> ^pi+ ^pi- gamma"
-        elif self.has_eta2pipipi0:
-            eta_decay_string = "eta -> ^pi+ ^pi- [pi0 -> gamma gamma]"
-
-        decay_string = f"B0 -> [{jpsi_decay_string}] [{eta_decay_string}]"
         return decay_string
 
     def rave_vertex_reconstruction(self, list_name: str = "B0", conf_level: int = 0,
@@ -286,10 +296,11 @@ class Reconstruction:
         print(b2.statistics)
 
 
-my_path = b2.create_path()
-input_file = "../simulation/root_files/jpsi2ee_eta2gammagamma_0.root"
-reco = Reconstruction(input_file, my_path)
-reco.reconstruction(input_file, "test.root")
+# Quick testing ...
+# my_path = b2.create_path()
+# input_file = "../simulation/root_files/jpsi2ee_eta2gammagamma_0.root"
+# reco = Reconstruction(input_file, my_path)
+# reco.reconstruction(input_file, "test.root")
 
 
 if __name__ == "__main__":

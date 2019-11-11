@@ -4,6 +4,7 @@ import variables.collections as vc
 import variables.utils as vu
 import vertex as vx
 import yaml
+
 from config.parse_config import DecayList
 
 

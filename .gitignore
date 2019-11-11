@@ -1,7 +1,7 @@
-/b2jpsi_eta/misc/login_text.sh
+/b2jpsi_eta/src/misc/login_text.sh
 /venv/
 /.idea/
 /login_text.sh
-/constants/login_text.sh
-/b2jpsi_eta/evt_gen/root_files/
+/b2jpsi_eta/src/constants/login_text.sh
+/b2jpsi_eta/src/evt_gen/root_files/
 /b2jpsi_eta/.snakemake/
