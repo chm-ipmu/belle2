@@ -1,4 +1,7 @@
-### Snakefile which runs my_reconstruction script after MC created
+"""perform_reconstruction.snake
+.snake file to perform reconstruction on simulated events which have been passed through Belle II (GSIM).
+Also provides final hadd operation to merge distinct batch job files together.
+"""
 rule perform_reconstruction:
     input: "simulation/root_files/{decay}_{i}.root"
     output: "my_reconstruction/root_files/{decay}_{i}.root"

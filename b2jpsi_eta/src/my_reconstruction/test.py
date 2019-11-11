@@ -27,7 +27,7 @@ def reconstruction(input_file, output_file):
     ## radiative photon correction
     ma.fillParticleList(
         decayString="e+:uncorrected",
-        # cut='electronID > 0.01 and d0 < 2 and abs(z0) < 4',
+        # where='electronID > 0.01 and d0 < 2 and abs(z0) < 4',
         cut="electronID > 0.5 and abs(d0) < 1 and abs(z0) < 3",
         path=mypath,
     )
@@ -116,10 +116,10 @@ def reconstruction(input_file, output_file):
     # ma.rankByHighest('K+:good',   'kaonID',numBest=3, outputVariable='k_rank', path=mypath)
     # ma.variables.addAlias('k_rank', 'extraInfo(k_rank)')
     # ma.fillParticleList(decayString='pi+:good',
-    #                    cut='d0 < 2 and abs(z0) < 4 and chiProb > 0.001 and pionID > 0.5',
+    #                    where='d0 < 2 and abs(z0) < 4 and chiProb > 0.001 and pionID > 0.5',
     #                    path=mypath)
     # ma.fillParticleList(decayString='K+:good',
-    #                    cut='d0 < 2 and abs(z0) < 4 and chiProb > 0.001 and kaonID > 0.5',
+    #                    where='d0 < 2 and abs(z0) < 4 and chiProb > 0.001 and kaonID > 0.5',
     #                    path=mypath)
 
     # reconstruct Ks -> pi+ pi- decay
@@ -408,7 +408,7 @@ def reconstruction(input_file, output_file):
     ## provide flavor information using the tag side
     # applyCuts('B0:jpsiks', 'qrOutput(FBDT) > -2')
     #
-    ## If you applied the cut on qrOutput(FBDT) > -2 before then you can rank by highest r- factor
+    ## If you applied the where on qrOutput(FBDT) > -2 before then you can rank by highest r- factor
     # rankByHighest('B0:jpsiks', 'abs(qrOutput(FBDT))', 0, 'Dilution_rank')
 
     # Fit Vertex of the B0 on the tag side

@@ -1,0 +1,20 @@
+"""Snakefile
+Final Snakefile which composes individual analysis steps in the b2jpsieta analysis.
+- Author: Colm Murphy
+- Institute: IPMU
+- Email: colm.murphy@ipmu.jp
+- Repository: https://github.com/chm-ipmu/belle2
+"""
+
+configfile: "snakemake_config/b2jpsi_eta.yaml"
+
+# EvtGen --> GSIM
+# Makes DECAYS variable available.
+include: "snakefiles/produce_mc.snake"
+
+# Perform my_reconstruction on GSIM files
+include: "snakefiles/perform_reconstruction.snake"
+
+# Dummy rule to create all needed files
+rule all:
+    input: expand("merged/root_files/{decay}.root", decay=DECAYS)

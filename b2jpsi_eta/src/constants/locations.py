@@ -1,5 +1,9 @@
-# Directories / file locations
-KEKCC_HOME = "/gpfs/home/belle2/murphyco"
+""" constants/locations.py
+Directories / file locations for importing
+"""
+KEKCC_HOME = "/home/belle2/murphyco"
 DEC_FILES = (
-    "/gpfs/home/belle2/murphyco/PycharmProjects/belle2/b2jpsi_eta/evt_gen/dec_files"
+    "/home/belle2/murphyco/PycharmProjects/belle2/b2jpsi_eta/src/evt_gen/dec_files"
 )
+PROJECT_ROOT = "/home/belle2/murphyco/PycharmProjects/belle2/b2jpsi_eta/src/"
+PLOTS_DIR = "/home/belle2/murphyco/PycharmProjects/belle2/b2jpsi_eta/src/plots/plots/"

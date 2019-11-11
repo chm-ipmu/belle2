@@ -1,0 +1,27 @@
+"""produce_mc.snake
+.snake file to take DEC files and use them to create MC with EvtGen, then simulate Belle II
+"""
+# Config file is read-in by parent Snakefile, this .snake file is imported
+DECAYS = config["decays"]
+
+# Parameters for defining how many events each job should generate/pass through simulation
+EVENTS_PER_MODE = config["total_events_per_mode"]
+EVENTS_PER_JOB = config["events_per_job"]
+N_JOBS = list(range(int(EVENTS_PER_MODE / EVENTS_PER_JOB)))
+
+print(f"Events to make per mode: {EVENTS_PER_MODE}")
+print(f"Events to run per job: {EVENTS_PER_JOB}")
+print(f"==> jobs per mode: {N_JOBS}")
+
+# Create MC .root files (not yet passed through Belle II)
+rule generate_mc_block:
+    input: "dec_files/{decay}.DEC"
+    # Don't need to keep these files after they're made, so mark as temp (saves space).
+    output: temp("evt_gen/root_files/{decay}_{i}.root")
+    shell: "basf2 evt_gen/generate.py {EVENTS_PER_JOB} {input} {output} {wildcards.i}"
+
+# Pass generated MC .root files through Belle II detector simulation
+rule simulate_b2:
+    input: "evt_gen/root_files/{decay}_{i}.root"
+    output: "simulation/root_files/{decay}_{i}.root"
+    shell: "basf2 simulation/belle2.py {input} {output}"
