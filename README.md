@@ -15,6 +15,6 @@ the Kavli Institute for the Physics and Mathematics of the Universe (IPMU).
 
 Please see the b2jpsi_eta folder for more details on my current analysis project.
 Having been giving a fresh start at an analysis I aim to make this as reproducible as 
-possible, and to employ best practises wherever possible.
+possible, and to employ best practices wherever possible.
 
 Contact: colm(dot)murphy(at)ipmu(dot)jp
