@@ -1,5 +1,6 @@
 """produce_mc.snake
-.snake file to take DEC files and use them to create MC with EvtGen, then simulate Belle II
+.snake file to take DEC files and use them to create MC with EvtGen, then simulate Belle II.
+evt_gen step is very quick so is grouped with simulation jobs to save on batch queueing time.
 """
 # Config file is read-in by parent Snakefile, this .snake file is imported
 DECAYS = config["decays"]
@@ -11,10 +12,11 @@ N_JOBS = list(range(int(EVENTS_PER_MODE / EVENTS_PER_JOB)))
 
 print(f"Events to make per mode: {EVENTS_PER_MODE}")
 print(f"Events to run per job: {EVENTS_PER_JOB}")
-print(f"==> jobs per mode: {N_JOBS}")
+print(f"==> jobs per mode: {len(N_JOBS)}")
 
 # Create MC .root files (not yet passed through Belle II)
 rule generate_mc_block:
+    group: "produce_mc"
     input: "dec_files/{decay}.DEC"
     # Don't need to keep these files after they're made, so mark as temp (saves space).
     output: temp("evt_gen/root_files/{decay}_{i}.root")
@@ -22,6 +24,7 @@ rule generate_mc_block:
 
 # Pass generated MC .root files through Belle II detector simulation
 rule simulate_b2:
+    group: "produce_mc"
     input: "evt_gen/root_files/{decay}_{i}.root"
     output: "simulation/root_files/{decay}_{i}.root"
     shell: "basf2 simulation/belle2.py {input} {output}"
