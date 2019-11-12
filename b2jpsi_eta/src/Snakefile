@@ -15,6 +15,15 @@ include: "snakefiles/produce_mc.snake"
 # Perform my_reconstruction on GSIM files
 include: "snakefiles/perform_reconstruction.snake"
 
+# Perform preliminary plots from reconstructed/merged .root files
+include: "snakefiles/reconstruction_plots.snake"
+
 # Dummy rule to create all needed files
 rule all:
-    input: expand("merged/root_files/{decay}.root", decay=DECAYS)
+    input:
+         # expand("merged/root_files/{decay}.root", decay=DECAYS),
+         "tables/detection_efficiency.tex",
+         expand("plots/plots/reconstruction/{decay}_{vvar}_sig_vs_bkg.pdf", decay=DECAYS, vvar="deltaE Mbc".split()),
+         expand("plots/plots/reconstruction/{decay}_{sorb}_joint.pdf", decay=DECAYS, sorb="sig bkg".split())
+
+#

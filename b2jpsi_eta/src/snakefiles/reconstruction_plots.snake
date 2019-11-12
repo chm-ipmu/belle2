@@ -1,0 +1,20 @@
+"""Make some prelimary plots using reconstructed and merged .root files"""
+
+localrules: reconstruction_plots_joint, reconstruction_plots_sig_vs_bkg, efficiency_table
+
+rule reconstruction_plots_sig_vs_bkg:
+    input: "merged/root_files/{decay}.root"
+    output: "plots/plots/reconstruction/{decay}_{vvar}_sig_vs_bkg.pdf"
+    group: "reconstruction_plots"
+    shell: "python plots/reconstruction.py plot_sig_vs_bkg_{wildcards.vvar} {wildcards.decay}"
+
+rule reconstruction_plots_joint:
+    input: "merged/root_files/{decay}.root"
+    output: "plots/plots/reconstruction/{decay}_{sorb}_joint.pdf"
+    group: "reconstruction_plots"
+    shell: "python plots/reconstruction.py plot_joint {wildcards.decay} {wildcards.sorb}"
+
+rule efficiency_table:
+    input: expand("merged/root_files/{decay}.root", decay=DECAYS)
+    output: "tables/detection_efficiency.tex"
+    shell: "python efficiencies/detection.py"

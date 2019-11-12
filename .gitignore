@@ -5,3 +5,4 @@
 /b2jpsi_eta/src/constants/login_text.sh
 /b2jpsi_eta/src/evt_gen/root_files/
 /b2jpsi_eta/.snakemake/
+/b2jpsi_eta/.Snakefile.backup

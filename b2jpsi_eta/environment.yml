@@ -1,0 +1,20 @@
+name: jeta
+channels:
+  - defaults
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.7
+  - ipython
+  - root_pandas
+  - pandas
+  - numpy
+  - seaborn
+  - matplotlib
+  - zfit
+  - attrs
+  - thriftpy
+  - pytest
+  - pytest-xdist
+  - snakemake
+#    - black
