@@ -31,6 +31,7 @@ def get_sig_and_bkg_series(decay, var, range=None):
     background = tree[~is_signal]
     return background, signal
 
+
 def _read_decay(decay: str, where: Optional[str] = None, columns: List[str] = None, key: str = "b0") -> pd.DataFrame:
     """
     Take a merged, reconstructed decay .root file and return it is a pandas DataFrame
@@ -53,6 +54,7 @@ def plot_sig_vs_bkg(decay: str, var: str, range: Iterable[float], bins: int = 10
                     latex: Optional[str] = None) -> None:
     """
     Make a plot showing signal and background distributions for variable var, default "Mbc"
+    :param latex: Optional LaTeX string for x-axis label
     :param decay: Specify decay to plot data from
     :param var: Specify variable to plot
     :param range: Specify range to plot over
@@ -115,13 +117,17 @@ def plot_sig_vs_bkg_deltaE(decay: str) -> None:
 
 
 def plot_joint(decay: str, sig_or_bkg: str) -> None:
+    e_lower = -0.2
+    e_upper = 0.2
+    m_lower = 5.27
+    m_upper = 5.285
     is_sig = sig_or_bkg == "sig"
     if is_sig:
-        where = "isSignal && deltaE < 0 && deltaE > -1 && Mbc > 5.2"
+        where = f"isSignal && deltaE < {e_upper} && deltaE > {e_lower} && Mbc > {m_lower} && Mbc < {m_upper}"
         c = "g"
     else:
+        where = f"isSignal!=1 && deltaE < {e_lower} && deltaE > -5 && Mbc > 4.5"
         c = "magenta"
-        where = "isSignal!=1 && deltaE < 0 && deltaE > -5 && Mbc > 4.5"
 
     tree = _read_decay(decay=decay, where=where)
     grid = (
@@ -134,14 +140,16 @@ def plot_joint(decay: str, sig_or_bkg: str) -> None:
 
     # Draw a signal region box if you are looking at background plots
     if not is_sig:
-        grid.ax_joint.axhline(-1, c="red", lw=2, ls='--')
-        grid.ax_joint.axhline(0, c="red", lw=2, ls='--')
-        grid.ax_joint.axvline(5.2, c="red", lw=2, ls='--')
-        grid.ax_joint.axvline(5.3, c="red", lw=2, ls='--')
+        grid.ax_joint.axhline(e_lower, c="red", lw=2, ls='--')
+        grid.ax_joint.axhline(e_upper, c="red", lw=2, ls='--')
+
+        grid.ax_joint.axvline(m_lower, c="red", lw=2, ls='--')
+        grid.ax_joint.axvline(m_upper, c="red", lw=2, ls='--')
 
     grid.savefig(
         os.path.join(PLOTS_DIR, "reconstruction", f"{decay}_{sig_or_bkg}_joint.pdf")
     )
+
 
 if __name__ == '__main__':
     import sys

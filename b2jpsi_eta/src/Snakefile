@@ -25,5 +25,3 @@ rule all:
          "tables/detection_efficiency.tex",
          expand("plots/plots/reconstruction/{decay}_{vvar}_sig_vs_bkg.pdf", decay=DECAYS, vvar="deltaE Mbc".split()),
          expand("plots/plots/reconstruction/{decay}_{sorb}_joint.pdf", decay=DECAYS, sorb="sig bkg".split())
-
-#

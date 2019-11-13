@@ -3,9 +3,11 @@
 Also provides final hadd operation to merge distinct batch job files together.
 """
 rule perform_reconstruction:
+    params:
+          log_level="ERROR"  # Speeds up processing
     input: "simulation/root_files/{decay}_{i}.root"
     output: "my_reconstruction/root_files/{decay}_{i}.root"
-    shell: "basf2 my_reconstruction/template.py {input} {output}"
+    shell: "basf2 -l {params.log_level} my_reconstruction/template.py {input} {output}"
 
 rule merge_reconstructed:
     input: expand("my_reconstruction/root_files/{{decay}}_{i}.root", i=N_JOBS)

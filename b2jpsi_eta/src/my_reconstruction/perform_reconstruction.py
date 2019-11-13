@@ -141,39 +141,31 @@ class Reconstruction:
             ma.looseMCTruth(particle, path=self.path)
 
     @property
-    def decay_string(self):
+    def decay_string(self) -> str:
         """
-        Correctly formatted decay string derived from the decay given to constructor. ^ indicates that a
-        given particle will be used for vertex reconstruction.
-        :return:
+        Correctly formatted decay string derived from the decay given to constructor. See constants/mode_info.py for
+        more details
+        :return: Decay string used for reconstruction
         """
-        if self.is_jpsi2ee_eta2gammagamma:
-            decay_string = "B0 -> [J/psi -> ^e+ ^e-] [eta -> gamma gamma]"
-        elif self.is_jpsi2mumu_eta2gammagamma:
-            decay_string = "B0 -> [J/psi -> ^mu+ ^mu-] [eta -> gamma gamma]"
-        elif self.is_jpsi2ee_eta2pipigamma:
-            decay_string = "B0 -> [J/psi -> ^e+ ^e-] [eta -> ^pi+ ^pi- gamma]"
-        elif self.is_jpsi2mumu_eta2pipigamma:
-            decay_string = "B0 -> [J/psi -> ^mu+ ^mu-] [eta -> ^pi+ ^pi- gamma]"
-        elif self.is_jpsi2ee_eta2pipipi0:
-            decay_string = "B0 -> [J/psi -> ^e+ ^e-] [eta -> ^pi+ ^pi- [pi0 -> gamma gamma]]"
-        elif self.is_jpsi2mumu_eta2pipipi0:
-            decay_string = "B0 -> [J/psi -> ^mu+ ^mu-] [eta -> ^pi+ ^pi- [pi0 -> gamma gamma]]"
-        elif self.is_jpsi2ee_eta23pi0:
-            decay_string = "B0 -> [J/psi -> ^e+ ^e-] [eta -> [pi0 -> gamma gamma] [pi0 -> gamma gamma] [pi0 -> gamma gamma]]"
-        elif self.is_jpsi2mumu_eta23pi0:
-            decay_string = "B0 -> [J/psi -> ^mu+ ^mu-] [eta -> [pi0 -> gamma gamma] [pi0 -> gamma gamma] [pi0 -> gamma gamma]]"
-
+        from constants.mode_info import mode2decay_string
+        decay_string = mode2decay_string[self.decay]
         return decay_string
 
-    def rave_vertex_reconstruction(self, list_name: str = "B0", conf_level: int = 0,
-                                   constraint: str = "iptube") -> None:
+    def rave_vertex_reconstruction(
+            self, list_name: str = "B0", conf_level: int = 0, constraint: str = "iptube"
+    ) -> None:
         """
         Perform vertex reconstruction using Rave and the 'iptube' constraint. Could change the constraint to be an
         argument or specified in a config file.
         :return: None
         """
-        vx.vertexRave(list_name, conf_level, self.decay_string, constraint=constraint, path=self.path)
+        vx.vertexRave(
+            list_name,
+            conf_level,
+            self.decay_string,
+            constraint=constraint,
+            path=self.path,
+        )
 
     def reconstruction(self, input_file: str, output_file: str) -> None:
         """
@@ -192,7 +184,8 @@ class Reconstruction:
         # eta decay
         self.reconstruct_eta_decay()
         # They all have this one (you need to reconstruct the J/psi and eta first)
-        ma.reconstructDecay("B0 -> J/psi eta", "", path=self.path)
+        b_meson_cuts = "isSignal and Mbc > 5.1 and Mbc < 5.4"  # Quite harsh for now, otherwise files too big.
+        ma.reconstructDecay("B0 -> J/psi eta", b_meson_cuts, path=self.path)
 
         # For now truth match everything
         # All decays have these
@@ -236,71 +229,65 @@ class Reconstruction:
         ]
 
         # These are in all decay modes
-        ma.variablesToNtuple(
-            "J/psi", variables, filename=output_file, treename="jpsi", path=self.path
-        )
-        ma.variablesToNtuple(
-            "eta", variables, filename=output_file, treename="eta", path=self.path
-        )
+        # ma.variablesToNtuple(
+        #     "J/psi", variables, filename=output_file, treename="jpsi", path=self.path
+        # )
+        # ma.variablesToNtuple(
+        #     "eta", variables, filename=output_file, treename="eta", path=self.path
+        # )
         ma.variablesToNtuple(
             "B0", variables, filename=output_file, treename="b0", path=self.path
         )
-        ma.variablesToNtuple(
-            "gamma", variables, filename=output_file, treename="gamma", path=self.path
-        )
+        # ma.variablesToNtuple(
+        #     "gamma", variables, filename=output_file, treename="gamma", path=self.path
+        # )
 
         # J/psi decays
-        if self.has_jpsi2ee:
-            print("J/psi -> ee")
-            ma.variablesToNtuple(
-                "e+",
-                variables,
-                filename=output_file,
-                treename="electron",
-                path=self.path,
-            )
-
-        elif self.has_jpsi2mumu:
-            print("J/psi -> mumu")
-            ma.variablesToNtuple(
-                "mu+", variables, filename=output_file, treename="muon", path=self.path
-            )
-
-        # eta decays
-        if self.has_eta2pipigamma:
-            print("eta -> pipigamma")
-            ma.variablesToNtuple(
-                "pi+", variables, filename=output_file, treename="pion", path=self.path
-            )
-
-        elif self.has_eta2pipipi0:
-            print("eta -> pipipi0")
-            ma.variablesToNtuple(
-                "pi+", variables, filename=output_file, treename="pi", path=self.path
-            )
-            ma.variablesToNtuple(
-                "pi0", variables, filename=output_file, treename="pi0", path=self.path
-            )
-
-        elif self.has_eta2gammagamma:
-            print("eta -> gamma gamma")
-            pass
-
-        elif self.has_eta23pi0:
-            print("eta -> 3pi0")
-            ma.variablesToNtuple(
-                "pi0", variables, filename=output_file, treename="pi0", path=self.path
-            )
+        # if self.has_jpsi2ee:
+        #     ma.variablesToNtuple(
+        #         "e+",
+        #         variables,
+        #         filename=output_file,
+        #         treename="electron",
+        #         path=self.path,
+        #     )
+        #
+        # elif self.has_jpsi2mumu:
+        #     ma.variablesToNtuple(
+        #         "mu+", variables, filename=output_file, treename="muon", path=self.path
+        #     )
+        #
+        # # eta decays
+        # if self.has_eta2pipigamma:
+        #     ma.variablesToNtuple(
+        #         "pi+", variables, filename=output_file, treename="pion", path=self.path
+        #     )
+        #
+        # elif self.has_eta2pipipi0:
+        #     ma.variablesToNtuple(
+        #         "pi+", variables, filename=output_file, treename="pi", path=self.path
+        #     )
+        #     ma.variablesToNtuple(
+        #         "pi0", variables, filename=output_file, treename="pi0", path=self.path
+        #     )
+        #
+        # elif self.has_eta2gammagamma:
+        #     pass
+        #
+        # elif self.has_eta23pi0:
+        #     ma.variablesToNtuple(
+        #         "pi0", variables, filename=output_file, treename="pi0", path=self.path
+        #     )
 
         b2.process(self.path)
         print(b2.statistics)
 
 
 # Quick testing ...
-# my_path = b2.create_path()
-# input_file = "../simulation/root_files/jpsi2ee_eta2gammagamma_0.root"
-# reco = Reconstruction(input_file, my_path)
-# reco.reconstruction(input_file, "test.root")
+my_path = b2.create_path()
+input_file = "../simulation/root_files/jpsi2ee_eta2gammagamma_0.root"
+reco = Reconstruction(input_file, my_path)
+reco.reconstruction(input_file, "test.root")
 
 
 if __name__ == "__main__":

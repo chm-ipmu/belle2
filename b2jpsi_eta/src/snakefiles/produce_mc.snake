@@ -16,15 +16,19 @@ print(f"==> jobs per mode: {len(N_JOBS)}")
 
 # Create MC .root files (not yet passed through Belle II)
 rule generate_mc_block:
-    group: "produce_mc"
+    params:
+          log_level="ERROR"  # Speeds up processing
+    group: "produce_mc"  # Groups jobs together on batch queue, as evtgen stage is very quick
     input: "dec_files/{decay}.DEC"
     # Don't need to keep these files after they're made, so mark as temp (saves space).
     output: temp("evt_gen/root_files/{decay}_{i}.root")
-    shell: "basf2 evt_gen/generate.py {EVENTS_PER_JOB} {input} {output} {wildcards.i}"
+    shell: "basf2 -l {params.log_level} evt_gen/generate.py {EVENTS_PER_JOB} {input} {output} {wildcards.i}"
 
 # Pass generated MC .root files through Belle II detector simulation
 rule simulate_b2:
+    params:
+          log_level="ERROR"  # Speeds up processing
     group: "produce_mc"
     input: "evt_gen/root_files/{decay}_{i}.root"
-    output: "simulation/root_files/{decay}_{i}.root"
-    shell: "basf2 simulation/belle2.py {input} {output}"
+    output: temp("simulation/root_files/{decay}_{i}.root")
+    shell: "basf2 -l {params.log_level} simulation/belle2.py {input} {output}"

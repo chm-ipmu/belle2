@@ -26,12 +26,25 @@ class DetectionEfficiencyRow:
         return tree[mask]
 
     @property
+    def nsig(self):
+        return sum(self.tree["isSignal"])
+
+    @property
+    def eff(self):
+        return self.nsig / self.N_GEN
+
+    @property
+    def predicted_yield(self):
+        from misc import predicted_yields
+        return predicted_yields.predicted_info(self.decay)["tot"]
+
+    @property
     def row(self):
         mode = self.latex(mode2latex[self.decay])
-        nsig = sum(self.tree["isSignal"])
-        nsig_latex = self.latex(nsig)
-        eff_det = self.latex(nsig / self.N_GEN, fmt="0.2%")
-        row = f"{mode} & {nsig_latex} & {eff_det} \\\\" + "\n"
+        nsig_latex = self.latex(self.nsig)
+        eff_det = self.latex(self.eff, fmt="0.2%").replace("%", "\\%")
+        pred = format(self.predicted_yield, ".2f")
+        row = f"{mode} & {self.N_GEN} & {nsig_latex} & {eff_det} & {pred} \\\\" + "\n"
         return row
 
 
@@ -51,9 +64,9 @@ class DetectionEfficiencyTable:
             r"\begin{table}",
             r"\caption{Summary of detection efficiencies for each mode studied in this analysis.}",
             r"\label{tab:det_effs}",
-            r"\begin{tabular}{cccc}",
+            r"\begin{tabular}{ccccc}",
             r"\hline",
-            r"Mode & \# Gen & \# Signal & $\epsilon_{Det}$"
+            r"Mode & \# Gen & \# Signal & $\epsilon_{Det}$ & Pred. Yield \\"
             r"\hline\hline"
         ]
         table.extend(self.get_rows())
