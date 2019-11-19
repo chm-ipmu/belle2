@@ -2,9 +2,9 @@
 /.idea/
 /b2jpsi_eta/.snakemake/
 /b2jpsi_eta/.Snakefile.backup
-/b2jpsi_eta/src/plots/plots/
-/b2jpsi_eta/src/tables/
+#/b2jpsi_eta/src/plots/plots/
+#/b2jpsi_eta/src/tables/
 
 *.root
-*.pdf
-*.tex
+#*.pdf
+#*.tex

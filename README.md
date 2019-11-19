@@ -3,6 +3,14 @@ Belle II Work
 
 General repository for personal work on the Belle II experiment.
 
+Individual projects:
+- b2jpsi_eta
+    - Terminated after finding expected number of events too low to
+     proceed with analysis using 2019-2021 Belle II dataset.
+- flavour_tagging
+    - Service task work on flavour tagger validation
+
+
 ------
 #### Colm Murphy
 ###### DPhil Candidate, University of Oxford
