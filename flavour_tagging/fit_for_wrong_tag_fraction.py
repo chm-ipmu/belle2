@@ -117,4 +117,14 @@ def fit_for_wrong_tag_fraction(ft_var: str = "mixFBDT") -> typing.Tuple[float, f
     return value, error
 
 
-fit_for_wrong_tag_fraction("mixFANN")
+if __name__ == '__main__':
+    import pandas as pd
+
+    results = {}
+
+    for var in "mixFANN mixDNN mixFBDT".split():
+        value, error = fit_for_wrong_tag_fraction(var)
+        results[var] = {'value': value, 'error': error}
+
+    df = pd.DataFrame(results)
+    print(df)
